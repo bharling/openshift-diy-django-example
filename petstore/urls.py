@@ -1,13 +1,17 @@
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.views.generic.simple import direct_to_template
+try:
+    from django.views.generic.simple import direct_to_template
+    home_page = (r'^$', direct_to_template, {'template': 'index.html'})
+except ImportError:
+    from django.views.generic import TemplateView
+    home_page = (r'^$', TemplateView.as_view(template_name='index.html'))
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', direct_to_template, {'template': 'index.html'}),
-
+    home_page,
     # django admin
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
